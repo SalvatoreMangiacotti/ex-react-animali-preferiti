@@ -39,14 +39,18 @@
             title,
             content,
             show = false,
-            onClose = () => { }
+            onClose = () => { },
+            onConfirm = () => { }
         }) {
             return show && ReactDOM.createPortal(
                 <div className="modal-container">
                     <div className="modal">
                         <h2>{title}</h2>
                         <p>{content}</p>
-                        <button onClick={onClose}>Annulla</button>
+                        <div id="modal-buttons">
+                            <button onClick={onClose}>Annulla</button>
+                            <button onClick={onConfirm}>Conferma</button>
+                        </div>
                     </div>
                 </div>,
                 document.body
@@ -57,7 +61,7 @@
         function AnimaliPreferiti() {
 
             // Array di animali
-            const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
+            // const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
 
             // Array di partenza (vuoto)
             const [animals, setAnimals] = useState([]);
@@ -65,33 +69,43 @@
             // Modale
             const [show, setShow] = useState(false)
 
-            // Content
-            const [textInput, setTextInput] = useState(<input type="text" />)
+            // Valore dell'input
+            const [inputValue, setInputValue] = React.useState("");
+
+            function addAnimal() {
+                setAnimals(prevAnimals => [...prevAnimals, inputValue]);
+                setInputValue(""); // Reset dell'input
+            }
 
             return (
                 // Creazione del componente
                 <>
                     {/* Bottone per aggiungere un animale casuale alla lista */}
-                    <button onClick={() => {
-                        setShow(true)
-                        const randomAnimal = animalsChoices[Math.floor(Math.random() * animalsChoices.length)]
-                        setAnimals(() => [...animals, randomAnimal])
-                    }}>Aggiungi Animali </button >
+                    <button onClick={() => { setShow(true) }}>
+                        Aggiungi Animali
+                    </button >
 
                     {/* Dettagli che mostrano la lista di animali aggiunti */}
                     <details>
                         <summary>Animali</summary>
-                        <ul>{animals.map((animal, i) => <li key={i}>{animal}</li>)}</ul>
+                        <ul>
+                            {animals.map((animal, i) => <li key={i}>{animal}</li>)}
+                        </ul>
                     </details>
 
-                    <section>
-                        <Modal
-                            title="Il mio titolo preferito"
-                            content={textInput}
-                            show={show}
-                            onClose={() => setShow(false)}
-                        />
-                    </section>
+                    <Modal
+                        title="Aggiungi i tuoi animali preferiti"
+                        content={
+                            <input
+                                type="text"
+                                placeholder="Scrivi il nome di un animale..."
+                                onChange={e => setInputValue(e.target.value)}
+                            />
+                        }
+                        show={show}
+                        onClose={() => setShow(false)}
+                        onConfirm={(addAnimal)}
+                    />
                 </>
             )
 
