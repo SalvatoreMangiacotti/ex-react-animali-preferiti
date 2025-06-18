@@ -22,24 +22,60 @@
         const { createRoot } = ReactDOM;
         const { useState } = React;
 
-        // Componente
-        const ListaAnimali = () => {
 
-            const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
+        // Componente Modale
+        function Modal({
+            title,
+            content,
+            show = false,
+            onClose = () => { },
+            onConfirm = () => { }
+        }) {
+            return show && ReactDOM.createPortal(
+                <div className="modal-container">
+
+                    <div className="modal">
+
+                        <h2>{title}</h2>
+
+                        {content}
+
+                        <div id="modal-buttons">
+                            <button onClick={onClose}>Annulla</button>
+                            <button onClick={onConfirm}>Conferma</button>
+                        </div>
+
+                    </div>
+
+                </div>,
+                document.body
+            )
+        }
+
+
+        // Componente animali
+        const ListaAnimali = () => {
 
             // Trasformo animals in uno State che ha come valore iniziale un array vuoto
             const [animals, setAnimals] = useState([]);
 
+            // State che gestisce l'apertura e la chiusura della modale con valore iniziale false
+            const [show, setShow] = useState(false);
+
+            // State che gestisce l'input di testo dell'utente 
+            const [userInput, setUserInput] = useState('')
+
+            const addAnimal = () => {
+                if (!userInput) return;
+                setAnimals(currentArray => [...currentArray, userInput])
+                setUserInput('')
+                setShow(false)
+            }
+
             return (
                 <>
 
-                    <button onClick={() => {
-                        // Genera un indice random
-                        const randomIndex = Math.floor(Math.random() * animalsChoices.length)
-                        // Trova un animale random
-                        const randomAnimal = animalsChoices[randomIndex];
-                        setAnimals(currentArray => [...currentArray, randomAnimal])
-                    }}>
+                    <button onClick={() => { setShow(true) }}>
                         Aggiungi animale casuale
                     </button >
 
@@ -53,6 +89,18 @@
                             {animals.map((animale, index) => <li key={index}>{animale}</li>)}
                         </ul>
                     </details>
+
+                    <Modal
+                        show={show}
+                        onClose={() => setShow(false)}
+                        onConfirm={addAnimal}
+                        title="Aggiungi animale"
+                        content={<input
+                            type="text"
+                            value={userInput}
+                            onChange={e => setUserInput(e.target.value)}
+                        />}
+                    />
 
                 </>
             )
