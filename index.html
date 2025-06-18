@@ -19,13 +19,30 @@
 
     <script type="text/babel">
 
+        const { createRoot } = ReactDOM;
+        const { useState } = React;
+
         // Componente
         const ListaAnimali = () => {
 
-            const animals = ["Cane", "Gatto", "Pappagallo"];
+            const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
+
+            // Trasformo animals in uno State che ha come valore iniziale un array vuoto
+            const [animals, setAnimals] = useState([]);
 
             return (
                 <>
+
+                    <button onClick={() => {
+                        // Genera un indice random
+                        const randomIndex = Math.floor(Math.random() * animalsChoices.length)
+                        // Trova un animale random
+                        const randomAnimal = animalsChoices[randomIndex];
+                        setAnimals(currentArray => [...currentArray, randomAnimal])
+                    }}>
+                        Aggiungi animale casuale
+                    </button >
+
 
                     <details>
                         <summary>
@@ -43,7 +60,6 @@
         }
 
         // Montaggio del componente ListaAnimali
-        const { createRoot } = ReactDOM;
         const listaAnimali = document.querySelector('.lista-animali');
         const root = createRoot(listaAnimali);
         root.render(<ListaAnimali />)
